@@ -21,12 +21,12 @@ const mapNumbers = new Map([
    [19,'nineteen'],   
    [20,'twenty'],
    [30,'thirty'],
-   [40,'fourty'],
+   [40,'forty'],
    [50,'fifty'],
    [60,'sixty'],
    [70,'seventy'],
    [80,'eighty'],
-   [90,'ninty'],
+   [90,'ninety'],
    //[100,'hundred'],
 ])
 
@@ -36,18 +36,33 @@ module.exports = function toReadable (number) {
   } 
   else if (number >= 20 && number < 100) {
      let units = number % 10;
-     return `${mapNumbers.get(number - units)} ${mapNumbers.get(units)}`; 
-   }
-  else if (number < 1000) {
-     let hundreds = Math.floor(number / 100); 
-     let dozens = number - hundreds;
-     hundreds = `${mapNumbers.get(hundreds)} hundred`;
-     if (dozens % 10 === 0) {
-        return `${hundreds} ${dozens}`;
-     }
-     else 
-   units = dozens % 10;
-     return `${hundreds} ${dozens} ${mapNumbers.get(units-1)}`;
+     if (!units) {
+      return mapNumbers.get(number);
   }
+     return `${toReadable(number - units)} ${toReadable(units)}`; 
+   }
 
+   else if (number < 1000) {
+      let hundreds = Math.floor(number / 100); 
+      if ( number % 100 === 0) {
+      return `${toReadable(hundreds)} hundred`;  
+      }
+      else {
+         let hundreds = Math.floor(number / 100); 
+         let dozens = (number % 100) - (number % 10) ;
+         if (number % 10 === 0) {
+            return `${toReadable(hundreds)} hundred ${mapNumbers.get(dozens)}`;
+         }
+         else {
+            if (number % 100 < 20) {
+               let units = number % 100;
+               return `${toReadable(hundreds)} hundred ${mapNumbers.get(units)}`;
+            }
+            else
+            { let units = number % 10;
+            return `${toReadable(hundreds)} hundred ${mapNumbers.get(dozens)} ${mapNumbers.get(units)}`; }
+         }
+
+      }
+   }
 }
